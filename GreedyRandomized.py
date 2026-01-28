@@ -1,39 +1,39 @@
 #example of usage: python GreedyRandomized.py 10000 27 15 500000
 #generates 10000 random connected graphs with 15 nodes and 27 edges
-#then optimizes the best one using hill climbing
+#then optimizes the best one using hill climbing (500000 iterations)
 # finally displaying in graph6 format
 
 import random
 import sys
 import numpy as np
- 
+
 def convert_to_graph6(matrix):
- 
+
     bits = []
- 
+
     for i in range(1, len(matrix)):
         for j in range(i):
             bits.append(str(matrix[i][j]))
- 
+
     bits_join= "".join(bits)
- 
+
     while (len(bits_join))%6 !=0:
         bits_join += "0"
- 
+
     graph6 = chr(len(matrix)+63)
- 
+
     for i in range(0, len(bits_join),6):
         package = bits_join[i : i+6]
         value = int(package,2)
         graph6 += chr(value+63)
- 
+
     return graph6
 
 def convert_to_adjacency_list(matrix):
     adj = []
-    
+
     n = len(matrix)
-        
+
     for i in range(n):
         row = []
         for j in range(n):
@@ -41,7 +41,7 @@ def convert_to_adjacency_list(matrix):
                 row.append(j)
         adj.append(row)
     return adj
- 
+
 def generateGraph(n,k):
 
     max_k = n*(n-1)//2
@@ -49,14 +49,14 @@ def generateGraph(n,k):
     k_arr = np.zeros(max_k, dtype=int)
     k_arr[:k] = 1
     np.random.shuffle(k_arr)
- 
+
     matrix = np.zeros((n, n), dtype=int)
     lower_triangle = np.tril_indices(n, -1)
 
     matrix[lower_triangle] = k_arr
 
     matrix = matrix + matrix.T
-    
+
     while dfs(convert_to_adjacency_list(matrix)) == False:
         matrix = generateGraph(n,k)
 

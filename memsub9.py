@@ -1,35 +1,35 @@
-#example of usage: python greedysub9.py 78 15
+#example of usage: python greedysub9.py 15 78
 #it use a 9 nodes complete graph and mutate it node by node to kepp the closest spectral radius to n-1. 
 #finally displaying in graph6 format
 
 import sys
 import numpy as np
 import itertools
- 
+
 def convert_to_graph6(matrix):
- 
+
     bits = []
- 
+
     for i in range(1, len(matrix)):
         for j in range(i):
             bits.append(str(matrix[i][j]))
- 
+
     bits_join= "".join(bits)
- 
+
     while (len(bits_join))%6 !=0:
         bits_join += "0"
- 
+
     graph6 = chr(len(matrix)+63)
- 
+
     for i in range(0, len(bits_join),6):
         package = bits_join[i : i+6]
         value = int(package,2)
         graph6 += chr(value+63)
- 
+
     return graph6
 
 def convert_to_adjacency_matrix(graph6):
-    
+
     n = ord(graph6[0]) - 63
 
     bits = []
@@ -47,9 +47,9 @@ def convert_to_adjacency_matrix(graph6):
                 matrix[j][i] = 1
                 matrix[i][j] = 1
             cursor += 1
-    
+
     return matrix
-          
+
 def dfsRec(adjacency_list, visited, n, result):
 
     visited[n] = True
@@ -67,11 +67,13 @@ def dfs(adjacency_list):
         return True
     return False
 
-def calculate_spectral_radius(matrix):
+def calculate_einvalues(matrix):
     eigenvalues = np.linalg.eigvals(matrix)
-    spectral_radius = max(abs(ev) for ev in eigenvalues)
-    return spectral_radius
+    return eigenvalues
 
+def calculate_score(eigenvalues):
+    score = sum(abs(ev - np.round(ev)) for ev in eigenvalues)
+    return score
 
 def add_edge(matrix, max_k, max_n):
 
@@ -91,16 +93,16 @@ def add_edge(matrix, max_k, max_n):
             new_matrix.append([0]*(current_n+1))
             new_k = []
             for neighbor in neighbors:
-                
+
                 new_matrix[new_idx][neighbor] = 1
                 new_matrix[neighbor][new_idx] = 1
 
-                if(abs((current_n -1) - max_score) >= abs((current_n - 1) - calculate_spectral_radius(new_matrix) and dfs(new_matrix))):
+                if(abs((current_n -1) - max_score) >= abs((current_n - 1) - calculate_score(calculate_einvalues(new_matrix)) and dfs(new_matrix))):
                     final_matrix = new_matrix
-                    max_score = calculate_spectral_radius(new_matrix)
-    
+                    max_score = calculate_score(calculate_einvalues(new_matrix))
+
     return final_matrix
- 
+
 if __name__ == "__main__":
 
     n = int(sys.argv[1]) if (len(sys.argv)>1) else 15
