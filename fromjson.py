@@ -15,11 +15,9 @@ if __name__ == "__main__":
 
     file1 = str(sys.argv[1]) if (len(sys.argv)>1) else "sample.json"
     file2 = str(sys.argv[2]) if (len(sys.argv)>2) else "sampleout.txt"
-    
+
     data = read_json(file1)
 
     with open(file2, "w") as f:
         for value in data.values():
             f.write(str(value) + '\n')
-
-    
